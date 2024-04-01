@@ -2,15 +2,18 @@ from math import inf
 
 
 class Solution:
-    def lengthOfLongestSubsequence(self, nums: list[int], target: int) -> tuple[dict[int, int | float], dict[int, [int]]]:
+    def lengthOfLongestSubsequence(
+        self, nums: list[int], target: int
+    ) -> tuple[dict[int, int | float], dict[int, [int]]]:
         n = len(nums)
-        f = [[-inf] * (target + 1) for _ in range(2 * n + 1)]
+        table_len = 2 * n + 1
+        f = [[-inf] * (target + 1) for _ in range(table_len)]
         f[0][0] = 0
 
         # key: sum, value: last_index,
         target_last_indexes = {k: [] for k in range(target + 1)}
 
-        for i in range(1, 2 * n + 1):
+        for i in range(1, table_len):
             if i > n:
                 x = nums[i - n - 1]
             else:
@@ -63,10 +66,10 @@ def get_num_list(num_list: list[int], f_index: int, l_index: int) -> list[int]:
 
 
 if __name__ == '__main__':
-    nums = [5, 5, 1, 1, 3, 4]
+    nums = [1, 5, 5, 1]
     print("= = = = = = = = = = = = = = = = = = ")
     print(f"nums: {nums}")
-    m = 7
+    m = 5
     target = 2 * m
     solution = Solution()
     len_dict, last_index_dict = solution.lengthOfLongestSubsequence(nums, target)
