@@ -67,11 +67,11 @@ def get_num_list(num_list: list[int], f_index: int, l_index: int) -> list[int]:
 
 
 if __name__ == '__main__':
-    nums = [1, 5, 5, 1]
+    nums = [1, 1, 1, 1, 1, 1, 1, 2, 1]
 
     print("= = = = = = = = = = = = = = = = = = ")
     print(f"nums: {nums}")
-    m = 5
+    m = 4
     target = 2 * m
     solution = Solution()
     len_dict, last_index_dict = solution.lengthOfLongestSubsequence(nums, target)
