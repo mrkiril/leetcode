@@ -23,7 +23,8 @@ class Solution:
                 prev_row_index = i - 1
                 f[i][j] = f[prev_row_index][j]
                 if j >= x:
-                    new_len = max(f[i][j], f[prev_row_index][j - x] + 1)
+                    previous_len = f[prev_row_index][j - x] + 1
+                    new_len = max(f[i][j], previous_len)
                     if f[i][j] < new_len and (
                         prev_row_index in target_last_indexes[j - x]
                         or not target_last_indexes[j - x]
@@ -31,10 +32,10 @@ class Solution:
                         target_last_indexes[j] = [i]
                         f[i][j] = new_len
                     elif (
-                        f[i][j] == new_len and new_len > 0
+                        f[i][j] == previous_len and previous_len > 0
                         and (
-                            (new_len >= 2 and prev_row_index in target_last_indexes[j - x])
-                            or (new_len == 1 and x == j)
+                            (previous_len >= 2 and prev_row_index in target_last_indexes[j - x])
+                            or (previous_len == 1 and x == j)
                         )
                     ):
                         target_last_indexes[j].append(i)
@@ -67,6 +68,7 @@ def get_num_list(num_list: list[int], f_index: int, l_index: int) -> list[int]:
 
 if __name__ == '__main__':
     nums = [1, 5, 5, 1]
+
     print("= = = = = = = = = = = = = = = = = = ")
     print(f"nums: {nums}")
     m = 5
