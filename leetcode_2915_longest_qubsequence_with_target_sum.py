@@ -1,10 +1,32 @@
 from math import inf
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True, slots=True)
+class TargetResp:
+    target_value: int
+    num_list: list[int]
+
+    def __eq__(self, other):
+        return self.target_value == other.target_value and self.num_list == other.num_list
+
+
+def get_num_list(num_list: list[int], f_index: int, l_index: int) -> list[int]:
+    n = len(num_list)
+    response_list = []
+    for index in range(f_index, l_index):
+        if index >= n:
+            val = num_list[index - n]
+        else:
+            val = num_list[index]
+        response_list.append(val)
+    return response_list
 
 
 class Solution:
     def lengthOfLongestSubsequence(
         self, nums: list[int], target: int
-    ) -> tuple[dict[int, int | float], dict[int, [int]]]:
+    ) -> list[TargetResp]:
         n = len(nums)
         table_len = 2 * n + 1
         f = [[-inf] * (target + 1) for _ in range(table_len)]
@@ -40,30 +62,26 @@ class Solution:
                     ):
                         target_last_indexes[j].append(i)
 
-        return (
-            {
-                index: f[-1][index]
-                for index in range(target//2, target + 1)
-                if f[-1][index] > 0
-            },
-            {
-                k: v
-                for k, v in target_last_indexes.items()
-                if target // 2 <= k <= target
-            }
-        )
-
-
-def get_num_list(num_list: list[int], f_index: int, l_index: int) -> list[int]:
-    n = len(num_list)
-    response_list = []
-    for index in range(f_index, l_index):
-        if index >= n:
-            val = nums[index - n]
-        else:
-            val = nums[index]
-        response_list.append(val)
-    return response_list
+        len_dict = {
+            index: f[-1][index]
+            for index in range(target//2, target + 1)
+            if f[-1][index] > 0
+        }
+        last_index_dict = {
+            k: v
+            for k, v in target_last_indexes.items()
+            if target // 2 <= k <= target
+        }
+        resp_list = []
+        for target_value, length in len_dict.items():
+            for last_index_value in last_index_dict[target_value]:
+                # last_index_value = last_index_dict[target_value][0]
+                first_index_value = last_index_value - length
+                final_list = get_num_list(nums, first_index_value, last_index_value)
+                resp_list.append(
+                    TargetResp(target_value=target_value, num_list=final_list)
+                )
+        return resp_list
 
 
 if __name__ == '__main__':
@@ -74,10 +92,6 @@ if __name__ == '__main__':
     m = 4
     target = 2 * m
     solution = Solution()
-    len_dict, last_index_dict = solution.lengthOfLongestSubsequence(nums, target)
-    for target_value, length in len_dict.items():
-        last_index_value = last_index_dict[target_value][0]
-        first_index_value = last_index_value - length
-        final_list = get_num_list(nums, first_index_value, last_index_value)
-        print(f"target_value: {target_value}, length: {length} -> {final_list}")
-
+    target_resp_list = solution.lengthOfLongestSubsequence(nums, target)
+    for t in target_resp_list:
+        print(f"target_value: {t.target_value}, length: {len(t.num_list)} -> {t.num_list}")
